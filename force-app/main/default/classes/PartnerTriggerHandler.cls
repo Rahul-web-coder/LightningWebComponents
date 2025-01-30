@@ -35,11 +35,6 @@ public with sharing class PartnerTriggerHandler {
                         task.Opportunity__c = partner.Opportunity__c;
                         opp.Id = partner.Opportunity__c;
 
-                        if(partner.Role__c != null && partner.Role__c == 'To Do'){
-                            task.Subject = 'To Do Task';
-                            task.Description = 'A new Partner To Do Task'; 
-                            opp.StageName = 'To Do';
-                        }
                         if(partner.Role__c != null && partner.Role__c == 'In Progress'){
                             task.Subject = 'In Progress Task';
                             task.Description = 'A new Partner In Progress Task'; 
@@ -57,7 +52,10 @@ public with sharing class PartnerTriggerHandler {
                             opp.StageName = 'Done';
                         }
                         opportunityToUpdate.add(opp);
-                        taskToCreate.add(task);
+                        
+                        if(partner.Role__c != null && partner.Role__c != 'To Do'){
+                           taskToCreate.add(task);
+                        }
             
                     }
                 }
