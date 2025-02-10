@@ -12,4 +12,9 @@ export default class LwcLeadCovertComponent extends LightningElement {
             this.message = 'Error: ' + error.body.message;
         });
     }
+
+    closeModal() {
+        console.log('Inside Close Model');
+          window.location.reload();
+    }
 }

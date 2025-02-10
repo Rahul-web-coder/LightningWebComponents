@@ -2,12 +2,23 @@
  * @description       : 
  * @author            : Rahul Mahato
  * @group             : 
- * @last modified on  : 01-30-2025
+ * @last modified on  : 02-05-2025
  * @last modified by  : Rahul Mahato
 **/
 
 public with sharing class StageRollBackController {
-    
+
+    static final String STAGE_ROLLBACK = 'Stage Rollback';
+    static final String STAGE_ROLLBACK_SUCCESS_STATUS = 'Success';
+    static final String STAGE_ROLLBACK_FAILED_STATUS = 'Failure';
+    static final String INSUFFICIENT_PRIVILEGES_TO_UPDATE_OPPORTUNITY = 'Insufficient permissions to update Opportunity StageName';
+    static final String INSUFFICIENT_PRIVILEGES_TO_UPDATE_TASK = 'Insufficient permissions to update Task';
+    static final String IN_PROGRESS_STAGE = 'In Progress';
+
+    /**
+    * @description : Request Wrapper StageRollbackController.
+    * @author Rahul Mahato | 01-30-2025 
+    **/
     public class RequestWrapper{
         @InvocableVariable
         public Id oppId;
@@ -27,87 +38,75 @@ public with sharing class StageRollBackController {
     **/
     @InvocableMethod(label = 'Stage RollBack' description = 'Stage Rollback')
     public static List<String> doRollBack(List<RequestWrapper> requestList){
+        
         SavePoint savepoint = Database.setSavepoint();
         List<String> messageList = new List<String>();
 
         try{
 
             for(RequestWrapper reqObj : requestList){
+                
                 updateRecordFields(reqObj.oppId, reqObj.oppStage, reqObj.taskNameList);
-                messageList.add('Success');
+                messageList.add(STAGE_ROLLBACK_SUCCESS_STATUS);
             }
 
             return messageList;
 
         }catch(Exception e){
             Database.rollback(savepoint);
-            messageList.add('Failure');
+            messageList.add(STAGE_ROLLBACK_FAILED_STATUS);
             return messageList;
         }
     }
 
+    /**
+    * @description : Update task and Opportunity Stage.  
+    * @author Rahul Mahato | 02-05-2025 
+    * @param oppId 
+    * @param oppStage 
+    * @param taskNameList 
+    **/
     public static void updateRecordFields(Id oppId, String oppStage, List<String> taskNameList){
-        List<Id> taskidList = new List<Id>();
-        List<Id> partnerIdList = new List<Id>();
+        List<Task> taskidList = new List<Task>();
+
+        // Query the Opportunity record
+        Opportunity opp = [SELECT Id, StageName FROM Opportunity WHERE Id = :oppId WITH SYSTEM_MODE LIMIT 1];
+            
+        // Update the StageName field
+        opp.StageName = oppStage;
+
+        // Perform the update
+        if (Schema.sObjectType.Opportunity.fields.StageName.isUpdateable()) {
+            Database.update(opp);
+        } else {
+            throw new MyException(INSUFFICIENT_PRIVILEGES_TO_UPDATE_OPPORTUNITY);
+        }
 
         List<Task> taskList = [ SELECT Id, Subject, Status, Opportunity__c 
                                       FROM Task 
                                       WHERE Opportunity__c =:oppId 
-                                      AND Subject IN :taskNameList
-                                      AND Status !='Completed'];
+                                      AND Subject IN :taskNameList WITH SYSTEM_MODE];
 
         for(Task taskObj : taskList){
-            taskidList.add(taskObj.Id);
-        }  
-
-        List<Partner__c> partnerList =  [SELECT ID, Opportunity__c, Role__c 
-                                            FROM Partner__c
-                                            WHERE Opportunity__c =:oppId 
-                                            AND Role__c IN :taskNameList];
-
-        for(Partner__c partnerObj : partnerList){
-            partnerIdList.add(partnerObj.Id);
+            taskObj.Status = IN_PROGRESS_STAGE;
+            taskidList.add(taskObj);
         }  
         
         // Delete the tasks using the collected task IDs
         if(!taskidList.isEmpty()) {
             try {
-                delete [SELECT Id FROM Task WHERE Id IN :taskidList];
-                System.debug('Tasks deleted successfully: ' + taskidList.size());
+
+                if (Schema.sObjectType.Task.isUpdateable()) {
+                    Database.update(taskidList);
+                } else {
+                    throw new MyException(INSUFFICIENT_PRIVILEGES_TO_UPDATE_TASK);
+                }
             } catch(Exception e) {
-                System.debug('Error deleting tasks: ' + e.getMessage());
+                // Handle the exception appropriately, e.g., log it or rethrow it
+                throw new System.DmlException(e.getMessage());
             }
-        } else {
-            System.debug('No tasks to delete.');
         }
-
-        // Delete the Partner__c records using the collected partner IDs
-        if(!partnerIdList.isEmpty()) {
-            try {
-                delete [SELECT Id FROM Partner__c WHERE Id IN :partnerIdList];
-                System.debug('Partner records deleted successfully: ' + partnerIdList.size());
-            } catch(Exception e) {
-                System.debug('Error deleting Partner records: ' + e.getMessage());
-            }
-        } else {
-            System.debug('No Partner records to delete.');
-        }
-
-        // Update the Opportunity StageName
-        try {
-            // Query the Opportunity record
-            Opportunity opp = [SELECT Id, StageName FROM Opportunity WHERE Id = :oppId LIMIT 1];
-            
-            // Update the StageName field
-            opp.StageName = oppStage;
-
-            // Perform the update
-            update opp;
-            System.debug('Opportunity StageName updated successfully to: ' + oppStage);
-        } catch (Exception e) {
-            System.debug('Error updating Opportunity StageName: ' + e.getMessage());
-        }
-    }
+    } 
 
     
 }
