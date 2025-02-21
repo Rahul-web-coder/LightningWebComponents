@@ -1,0 +1,28 @@
+<!--
+  @description       : 
+  @author            : Rahul Mahato
+  @group             : 
+  @last modified on  : 02-21-2025
+  @last modified by  : Rahul Mahato
+-->
+<template>
+    <lightning-card title="lightining record view-form">
+        <lightning-record-view-form 
+        object-api-name="Account" 
+        record-id="001dL00000oaQu4QAE"
+        >
+        <div class="slds-grid slds-gutters">
+
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-output-field field-name="Name"></lightning-output-field>
+                <lightning-output-field field-name="Phone"></lightning-output-field>
+                <lightning-output-field field-name="Industry"></lightning-output-field>
+            </div>
+
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-output-field field-name="AnnualRevenue"></lightning-output-field>
+            </div>
+        </div>
+        </lightning-record-view-form>
+    </lightning-card>
+</template>
