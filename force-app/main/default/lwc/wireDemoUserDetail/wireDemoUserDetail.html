@@ -1,0 +1,26 @@
+<!--
+  @description       : 
+  @author            : Rahul Mahato
+  @group             : 
+  @last modified on  : 02-24-2025
+  @last modified by  : Rahul Mahato
+-->
+<template>
+    <lightning-card title="User detail Using Wire as function">
+        <div class="slds-var-p-around_medium">
+            <template if:true={userDetails}>
+                <div>Email - {userDetails.Email.value}</div>
+                <div>Name - {userDetails.Name.value}</div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="User detail Using Wire as property ">
+        <div class="slds-var-p-around_medium">
+            <template if:true={userDetailProperty.data}>
+                <div>Email - {userDetailProperty.data.fields.Email.value}</div>
+                <div>Name - {userDetailProperty.data.fields.Name.value}</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

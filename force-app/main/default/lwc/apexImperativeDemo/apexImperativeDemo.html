@@ -1,0 +1,28 @@
+<!--
+  @description       : 
+  @author            : Rahul Mahato
+  @group             : 
+  @last modified on  : 02-25-2025
+  @last modified by  : Rahul Mahato
+-->
+<template>
+    <lightning-card title="Apex Imperative Demo">
+    <div class="slds-var-p-around_medium">
+        <lightning-button 
+            variant="brand" 
+            label="Call Account Method" 
+            onclick={handleClick}
+        ></lightning-button>
+    </div>
+
+    <div class="slds-var-p-around_medium">
+        <template if:true={accounts}>
+            <template for:each={accounts} for:item="account">
+                <div class="slds-box slds-box_xx-small" key={account.Id}>
+                    <p><strong>Name : </strong> {account.Name} </p>
+                </div>
+            </template>
+        </template>
+    </div>
+    </lightning-card>
+</template>
