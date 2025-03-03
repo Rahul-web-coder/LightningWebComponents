@@ -1,0 +1,57 @@
+<!--
+  @description       : 
+  @author            : Rahul Mahato
+  @group             : 
+  @last modified on  : 03-03-2025
+  @last modified by  : Rahul Mahato
+-->
+<template>
+    <div class="container">
+        <h1>YouTube Video Search</h1>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <input type="text" placeholder="Search YouTube..." value={searchQuery} oninput={handleInputChange}
+                class="search-input" />
+            <button onclick={handleSearch} class="search-button">Search</button>
+        </div>
+
+        <!-- Embedded Video Player -->
+        <template if:true={selectedVideoId}>
+            <div class="video-player-container">
+                <!-- Close Button -->
+                <button class="close-button" onclick={closeVideo}>❌</button>
+                
+                <iframe class="video-frame" src={embeddedVideoUrl} allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </template>
+
+        <!-- Show Loading -->
+        <template if:true={isLoading}>
+            <p class="loading-text">Loading videos...</p>
+        </template>
+
+        <!-- Show Results -->
+        <template if:false={isLoading}>
+            <template if:true={videos}>
+                <div class="grid">
+                    <template for:each={videos} for:item="video">
+                        <div key={video.videoId} class="video-card" onclick={handleVideoClick}
+                            data-video-id={video.videoId}>
+                            <img src={video.thumbnail} alt={video.title} class="thumbnail" />
+                            <h3 class="title">{video.title}</h3>
+                            <p class="channel">{video.channelTitle}</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- Show Message if No Videos Found -->
+            <template if:false={videos}>
+                <p class="no-results">No videos found.</p>
+            </template>
+        </template>
+
+       
+    </div>
+</template>
