@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Rahul Mahato
  * @group             : 
- * @last modified on  : 02-26-2025
+ * @last modified on  : 04-15-2025
  * @last modified by  : Rahul Mahato
 **/
 public with sharing class AccountController {
@@ -36,7 +36,7 @@ public with sharing class AccountController {
     * @return List<Account> 
     **/
     @AuraEnabled(cacheable=true)
-    public static List<Account> filterAccountListType(String searchKey){
+    public static List<Account> filterAccountListTypeUsingKey(String searchKey){
         String key = '%' + searchKey + '%';
         return [SELECT Id, Name, Type, Website, Industry, AnnualRevenue FROM Account WHERE  NAME LIKE :key WITH SYSTEM_MODE LIMIT 5 ];
     }
