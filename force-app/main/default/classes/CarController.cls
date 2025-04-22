@@ -2,7 +2,7 @@
  * @description       : 
  * @author            : Rahul Mahato
  * @group             : 
- * @last modified on  : 04-17-2025
+ * @last modified on  : 04-22-2025
  * @last modified by  : Rahul Mahato
 **/
 public with sharing class CarController {
@@ -13,12 +13,35 @@ public with sharing class CarController {
     * @return List<Car__c> 
     **/
     public class Filters {
+        /**
+        * @description Get Set variable
+        * @author Rahul Mahato | 04-16-2025 
+        * @return searchKey
+        **/
         @AuraEnabled
         public String searchKey {get;set;}
+
+        /**
+        * @description Get Set variable
+        * @author Rahul Mahato | 04-16-2025 
+        * @return maxPrice
+        **/
         @AuraEnabled
         public Decimal maxPrice {get;set;}
+
+        /**
+        * @description Get Set variable
+        * @author Rahul Mahato | 04-16-2025 
+        * @return categories
+        **/
         @AuraEnabled
         public String[] categories {get;set;}
+
+        /**
+        * @description Get Set variable
+        * @author Rahul Mahato | 04-16-2025 
+        * @return makeType
+        **/
         @AuraEnabled
         public String[] makeType {get;set;}
     }
