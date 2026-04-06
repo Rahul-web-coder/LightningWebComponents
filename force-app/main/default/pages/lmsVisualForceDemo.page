@@ -17,8 +17,8 @@
                 <button class="slds-button slds-button_neutral" onclick="unsubscriberHandler()">Unsubscribe</button>
             </div>
 
-            <p>message Recieved</p>
-            <div id="recievedMessage"></div>
+            <p>Message Received</p>
+            <div id="receivedMessage"></div>
         </div>
     </div>
     <script>
@@ -48,8 +48,8 @@
       }
 
       function msgHandler(message){
-          let recievedMessage= document.getElementById("recievedMessage")
-          recievedMessage.innerHTML = message && message.lmsData ? message.lmsData.value:"No Data Send"
+          let receivedMessage= document.getElementById("receivedMessage")
+          receivedMessage.innerHTML = message && message.lmsData ? message.lmsData.value:"No Data Sent"
       }
     </script>
 </apex:page>

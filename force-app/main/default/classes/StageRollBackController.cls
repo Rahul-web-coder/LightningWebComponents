@@ -92,7 +92,7 @@ public with sharing class StageRollBackController {
             taskidList.add(taskObj);
         }  
         
-        // Delete the tasks using the collected task IDs
+        // Update the tasks using the collected task IDs
         if(!taskidList.isEmpty()) {
             try {
 
