@@ -57,5 +57,6 @@ export default class YoutubeSearch extends LightningElement {
     closeVideo() {
         this.selectedVideoId = null;
     }
+    
 }
 
